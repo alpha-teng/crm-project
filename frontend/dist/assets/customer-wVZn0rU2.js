@@ -1,0 +1,1 @@
+import t from"./request-9_FewzN9.js";const r=s=>t.get("/customers",{params:s}),a=s=>t.get(`/customers/${s}`),u=s=>t.post("/customers",s),c=(s,e)=>t.put(`/customers/${s}`,e),m=s=>t.delete(`/customers/${s}`),d=()=>t.get("/dashboard/stats");export{r as a,d as b,u as c,m as d,a as g,c as u};
