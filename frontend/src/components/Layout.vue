@@ -75,13 +75,12 @@
           </el-badge>
           <el-dropdown>
             <span class="user-info">
-              <el-avatar :size="32" style="background: #409EFF;">管</el-avatar>
-              <span class="user-name">管理员</span>
+              <el-avatar :size="32" style="background: #409EFF;">{{ userInitial }}</el-avatar>
+              <span class="user-name">{{ userName }}</span>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>个人设置</el-dropdown-item>
-                <el-dropdown-item divided>退出登录</el-dropdown-item>
+                <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -96,11 +95,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
 
 const route = useRoute()
+const router = useRouter()
 const isCollapse = ref(false)
+
+const userName = ref('')
+
+const userInitial = computed(() => {
+  return userName.value ? userName.value.charAt(0) : '?'
+})
+
+const loadUserInfo = () => {
+  try {
+    const userStr = localStorage.getItem('crm_user')
+    if (userStr) {
+      const user = JSON.parse(userStr)
+      userName.value = user.realName || user.username || '用户'
+    }
+  } catch (error) {
+    console.error('Failed to load user info:', error)
+    userName.value = '用户'
+  }
+}
+
+const handleLogout = () => {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    localStorage.removeItem('crm_token')
+    localStorage.removeItem('crm_user')
+    router.push('/login')
+  }).catch(() => {
+    // 用户取消退出
+  })
+}
+
+onMounted(() => {
+  loadUserInfo()
+})
 </script>
 
 <style scoped>

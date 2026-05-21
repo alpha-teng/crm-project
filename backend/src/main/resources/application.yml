@@ -40,3 +40,7 @@ app:
       url: https://api.siliconflow.cn/v1/chat/completions
       api-key: sk-qzuyohpgpcburordewzjsiwwiqrxhlabxxzsjgmlneajfeae
       model: Qwen/Qwen2.5-7B-Instruct
+
+jwt:
+  secret: crm-secret-key-2024-very-long-secret-key-for-jwt-token-generation-and-validation
+  expiration: 86400000

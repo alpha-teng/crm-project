@@ -2,8 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
 const Layout = () => import('@/components/Layout.vue')
+const Login = () => import('@/views/Login.vue')
 
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: { title: '登录' },
+  },
   {
     path: '/',
     component: Layout,
@@ -26,6 +33,33 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+// 路由守卫：检查登录状态
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('crm_token')
+  const user = localStorage.getItem('crm_user')
+  
+  // 已登录状态访问登录页，跳转到首页
+  if (to.path === '/login') {
+    if (token && user) {
+      next('/')
+    } else {
+      next()
+    }
+    return
+  }
+  
+  // 需要登录的页面，检查 token
+  if (!token || !user) {
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath },
+    })
+    return
+  }
+  
+  next()
 })
 
 export default router
