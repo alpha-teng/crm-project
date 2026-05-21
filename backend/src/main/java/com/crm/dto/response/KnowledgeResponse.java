@@ -10,7 +10,11 @@ public class KnowledgeResponse {
     
     private Long id;
     
+    private String title;
+    
     private String content;
+    
+    private String category;
     
     private Long customerId;
     
@@ -23,7 +27,9 @@ public class KnowledgeResponse {
         
         KnowledgeResponse response = new KnowledgeResponse();
         response.setId(doc.getId());
+        response.setTitle(doc.getTitle());
         response.setContent(doc.getContent());
+        response.setCategory(doc.getCategory());
         response.setCustomerId(doc.getCustomerId());
         response.setCreatedAt(doc.getCreatedAt());
         return response;

@@ -59,7 +59,9 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeDocMapper, Knowle
             
             // Create doc and save with embedding
             KnowledgeDoc doc = new KnowledgeDoc();
+            doc.setTitle(request.getTitle());
             doc.setContent(request.getContent());
+            doc.setCategory(request.getCategory());
             doc.setCustomerId(request.getCustomerId());
             doc.setEmbedding(embedding);
             

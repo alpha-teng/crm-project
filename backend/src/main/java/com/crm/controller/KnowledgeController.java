@@ -1,6 +1,7 @@
 package com.crm.controller;
 
 import com.crm.dto.request.KnowledgeRequest;
+import com.crm.dto.request.SearchRequest;
 import com.crm.dto.response.KnowledgeResponse;
 import com.crm.entity.KnowledgeDoc;
 import com.crm.service.IKnowledgeService;
@@ -31,8 +32,8 @@ public class KnowledgeController {
         return ResponseEntity.ok(knowledgeService.getDocById(id));
     }
     
-    @PostMapping
-    public ResponseEntity<KnowledgeResponse> createDoc(@RequestBody KnowledgeRequest request) {
+    @PostMapping("/add")
+    public ResponseEntity<KnowledgeResponse> addDoc(@RequestBody KnowledgeRequest request) {
         KnowledgeResponse response = knowledgeService.createDoc(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -49,7 +50,7 @@ public class KnowledgeController {
     }
     
     @GetMapping("/search")
-    public ResponseEntity<List<KnowledgeResponse>> searchSimilar(
+    public ResponseEntity<List<KnowledgeResponse>> searchSimilarGet(
             @RequestParam String query,
             @RequestParam(defaultValue = "5") int limit) {
         List<KnowledgeDoc> docs = knowledgeService.searchSimilar(query, limit);
@@ -58,4 +59,15 @@ public class KnowledgeController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responses);
     }
+    
+    @PostMapping("/search")
+    public ResponseEntity<List<KnowledgeResponse>> searchSimilar(
+            @RequestBody SearchRequest request) {
+        List<KnowledgeDoc> docs = knowledgeService.searchSimilar(request.getQuery(), request.getLimit());
+        List<KnowledgeResponse> responses = docs.stream()
+                .map(KnowledgeResponse::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
+    }
 }
+

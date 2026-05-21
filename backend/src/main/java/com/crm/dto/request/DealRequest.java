@@ -16,7 +16,7 @@ public class DealRequest {
     
     private BigDecimal amount;
     
-    private LocalDate contractDate;
+    private LocalDate dealDate;
     
     private String status;
     

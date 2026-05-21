@@ -78,7 +78,7 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements ID
         entity.setOpportunityId(request.getOpportunityId());
         entity.setTitle(request.getTitle());
         entity.setAmount(request.getAmount());
-        entity.setContractDate(request.getContractDate());
+        entity.setDealDate(request.getDealDate());
         entity.setStatus(request.getStatus());
         entity.setRemark(request.getRemark());
     }

@@ -20,4 +20,6 @@ public interface IOpportunityService extends IService<Opportunity> {
     void deleteOpportunity(Long id);
     
     List<OpportunityResponse> getOpportunitiesByCustomerId(Long customerId);
+    
+    OpportunityResponse updateOpportunityStage(Long id, String stage);
 }

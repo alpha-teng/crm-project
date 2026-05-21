@@ -30,7 +30,7 @@ public class Deal {
     private BigDecimal amount;
     
     @TableField("contract_date")
-    private LocalDate contractDate;
+    private LocalDate dealDate;
     
     @TableField("status")
     private String status;

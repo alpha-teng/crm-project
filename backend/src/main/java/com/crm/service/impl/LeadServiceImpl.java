@@ -75,9 +75,25 @@ public class LeadServiceImpl extends ServiceImpl<LeadMapper, Lead> implements IL
     
     private void mapRequestToEntity(LeadRequest request, Lead entity) {
         entity.setCustomerId(request.getCustomerId());
+        entity.setName(request.getName());
+        entity.setCompany(request.getCompany());
+        entity.setPhone(request.getPhone());
+        entity.setEmail(request.getEmail());
         entity.setSource(request.getSource());
         entity.setStatus(request.getStatus());
         entity.setScore(request.getScore());
         entity.setRemark(request.getRemark());
+    }
+    
+    @Override
+    public LeadResponse convertLead(Long id) {
+        Lead lead = getById(id);
+        if (lead == null) {
+            throw new RuntimeException("Lead not found with id: " + id);
+        }
+        lead.setStatus("converted");
+        updateById(lead);
+        log.info("Converted lead {} to customer", id);
+        return LeadResponse.fromEntity(lead);
     }
 }

@@ -32,7 +32,7 @@ public class AuthController {
     }
     
     @GetMapping("/me")
-    public ResponseEntity<LoginResponse> getCurrentUser(@RequestAttribute Long userId) {
+    public ResponseEntity<LoginResponse> getCurrentUser(@RequestAttribute Integer userId) {
         LoginResponse response = userService.getUserInfo(userId);
         return ResponseEntity.ok(response);
     }

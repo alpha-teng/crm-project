@@ -20,8 +20,8 @@ public class JwtInterceptor implements HandlerInterceptor {
         // 获取请求路径
         String requestURI = request.getRequestURI();
         
-        // 排除 /api/auth/** 路径
-        if (requestURI.startsWith("/api/auth/")) {
+        // 排除登录注册路径（不需要token）
+        if (requestURI.equals("/api/auth/login") || requestURI.equals("/api/auth/register")) {
             return true;
         }
         

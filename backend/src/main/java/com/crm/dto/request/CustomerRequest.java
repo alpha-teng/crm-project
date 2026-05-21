@@ -9,6 +9,8 @@ public class CustomerRequest {
     
     private String company;
     
+    private String industry;
+    
     private String phone;
     
     private String email;

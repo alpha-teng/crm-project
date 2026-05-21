@@ -9,5 +9,5 @@ public interface IUserService {
     
     void register(LoginRequest request, String realName, String role);
     
-    LoginResponse getUserInfo(Long userId);
+    LoginResponse getUserInfo(Integer userId);
 }

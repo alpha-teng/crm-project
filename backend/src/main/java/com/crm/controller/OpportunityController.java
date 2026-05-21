@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -49,5 +50,12 @@ public class OpportunityController {
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<OpportunityResponse>> getOpportunitiesByCustomerId(@PathVariable Long customerId) {
         return ResponseEntity.ok(opportunityService.getOpportunitiesByCustomerId(customerId));
+    }
+    
+    @PutMapping("/{id}/stage")
+    public ResponseEntity<OpportunityResponse> updateStage(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String stage = body.get("stage");
+        OpportunityResponse response = opportunityService.updateOpportunityStage(id, stage);
+        return ResponseEntity.ok(response);
     }
 }

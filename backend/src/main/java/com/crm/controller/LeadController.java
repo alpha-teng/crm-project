@@ -50,4 +50,10 @@ public class LeadController {
     public ResponseEntity<List<LeadResponse>> getLeadsByCustomerId(@PathVariable Long customerId) {
         return ResponseEntity.ok(leadService.getLeadsByCustomerId(customerId));
     }
+    
+    @PutMapping("/{id}/convert")
+    public ResponseEntity<LeadResponse> convertLead(@PathVariable Long id) {
+        LeadResponse response = leadService.convertLead(id);
+        return ResponseEntity.ok(response);
+    }
 }

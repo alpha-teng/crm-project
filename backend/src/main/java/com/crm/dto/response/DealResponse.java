@@ -20,7 +20,7 @@ public class DealResponse {
     
     private BigDecimal amount;
     
-    private LocalDate contractDate;
+    private LocalDate dealDate;
     
     private String status;
     
@@ -39,7 +39,7 @@ public class DealResponse {
         response.setOpportunityId(deal.getOpportunityId());
         response.setTitle(deal.getTitle());
         response.setAmount(deal.getAmount());
-        response.setContractDate(deal.getContractDate());
+        response.setDealDate(deal.getDealDate());
         response.setStatus(deal.getStatus());
         response.setRemark(deal.getRemark());
         response.setCreatedAt(deal.getCreatedAt());

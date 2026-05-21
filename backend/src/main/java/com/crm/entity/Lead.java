@@ -18,6 +18,18 @@ public class Lead {
     @TableField("customer_id")
     private Long customerId;
     
+    @TableField("name")
+    private String name;
+    
+    @TableField("company")
+    private String company;
+    
+    @TableField("phone")
+    private String phone;
+    
+    @TableField("email")
+    private String email;
+    
     @TableField("source")
     private String source;
     

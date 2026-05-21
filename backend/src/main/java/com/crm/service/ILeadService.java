@@ -20,4 +20,6 @@ public interface ILeadService extends IService<Lead> {
     void deleteLead(Long id);
     
     List<LeadResponse> getLeadsByCustomerId(Long customerId);
+    
+    LeadResponse convertLead(Long id);
 }

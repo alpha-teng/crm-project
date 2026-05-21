@@ -72,7 +72,7 @@ public class UserServiceImpl implements IUserService {
     }
     
     @Override
-    public LoginResponse getUserInfo(Long userId) {
+    public LoginResponse getUserInfo(Integer userId) {
         User user = userMapper.selectById(userId);
         
         if (user == null) {

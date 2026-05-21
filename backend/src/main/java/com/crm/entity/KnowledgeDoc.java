@@ -15,8 +15,14 @@ public class KnowledgeDoc {
     @TableId(type = IdType.AUTO)
     private Long id;
     
+    @TableField("title")
+    private String title;
+    
     @TableField("content")
     private String content;
+    
+    @TableField("category")
+    private String category;
     
     @TableField("customer_id")
     private Long customerId;

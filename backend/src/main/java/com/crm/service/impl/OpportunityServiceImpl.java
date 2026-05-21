@@ -82,4 +82,16 @@ public class OpportunityServiceImpl extends ServiceImpl<OpportunityMapper, Oppor
         entity.setExpectedCloseDate(request.getExpectedCloseDate());
         entity.setRemark(request.getRemark());
     }
+    
+    @Override
+    public OpportunityResponse updateOpportunityStage(Long id, String stage) {
+        Opportunity opportunity = getById(id);
+        if (opportunity == null) {
+            throw new RuntimeException("Opportunity not found with id: " + id);
+        }
+        opportunity.setStage(stage);
+        updateById(opportunity);
+        log.info("Updated opportunity {} stage to {}", id, stage);
+        return OpportunityResponse.fromEntity(opportunity);
+    }
 }
