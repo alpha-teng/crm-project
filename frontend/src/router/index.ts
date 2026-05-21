@@ -25,6 +25,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'deals', name: 'DealList', component: () => import('@/views/DealList.vue'), meta: { title: '成单管理' } },
       { path: 'knowledge', name: 'KnowledgeBase', component: () => import('@/views/KnowledgeBase.vue'), meta: { title: '知识库' } },
       { path: 'ai-search', name: 'AiSearch', component: () => import('@/views/AiSearch.vue'), meta: { title: 'AI查询' } },
+      { path: 'settings', name: 'Settings', component: () => import('@/views/Settings.vue'), meta: { title: '系统设置' } },
       { path: 'map', name: 'CustomerMap', component: () => import('@/views/CustomerMap.vue'), meta: { title: '客户地图' } },
     ],
   },

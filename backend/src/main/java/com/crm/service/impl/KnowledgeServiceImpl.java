@@ -6,13 +6,17 @@ import com.crm.dto.response.KnowledgeResponse;
 import com.crm.entity.KnowledgeDoc;
 import com.crm.mapper.KnowledgeDocMapper;
 import com.crm.service.IKnowledgeService;
+import com.crm.service.ISystemConfigService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -25,15 +29,23 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeDocMapper, Knowle
     
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final ISystemConfigService systemConfigService;
     
-    @Value("${app.ai.embedding.url}")
-    private String embeddingUrl;
+    // 从数据库读取配置
+    private String getEmbeddingUrl() {
+        return systemConfigService.getConfig("embedding.url",
+            "https://api.siliconflow.cn/v1/embeddings");
+    }
     
-    @Value("${app.ai.embedding.api-key}")
-    private String embeddingApiKey;
+    private String getEmbeddingApiKey() {
+        return systemConfigService.getConfig("embedding.apiKey",
+            "sk-qzuyohpgpcburordewzjsiwwiqrxhlabxxzsjgmlneajfeae");
+    }
     
-    @Value("${app.ai.embedding.model}")
-    private String embeddingModel;
+    private String getEmbeddingModel() {
+        return systemConfigService.getConfig("embedding.model",
+            "BAAI/bge-large-zh-v1.5");
+    }
     
     @Override
     public List<KnowledgeResponse> getAllDocs() {
@@ -54,10 +66,8 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeDocMapper, Knowle
     @Override
     public KnowledgeResponse createDoc(KnowledgeRequest request) {
         try {
-            // Generate embedding
             String embedding = generateEmbedding(request.getContent());
             
-            // Create doc and save with embedding
             KnowledgeDoc doc = new KnowledgeDoc();
             doc.setTitle(request.getTitle());
             doc.setContent(request.getContent());
@@ -65,7 +75,6 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeDocMapper, Knowle
             doc.setCustomerId(request.getCustomerId());
             doc.setEmbedding(embedding);
             
-            // Use mapper's custom insert method
             baseMapper.insertWithEmbedding(doc);
             
             log.info("Created knowledge doc with id: {}", doc.getId());
@@ -95,11 +104,11 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeDocMapper, Knowle
     @Override
     public List<KnowledgeDoc> searchSimilar(String query, int limit) {
         try {
-            // Generate embedding for the query
             String queryEmbedding = generateEmbedding(query);
-            
-            // Search using mapper's custom method
-            return baseMapper.searchByVectorSimilarity(queryEmbedding, limit);
+            int effectiveLimit = Integer.parseInt(
+                systemConfigService.getConfig("embedding.maxResults", "10"));
+            return baseMapper.searchByVectorSimilarity(queryEmbedding,
+                (limit > 0 && limit < effectiveLimit) ? limit : effectiveLimit);
             
         } catch (Exception e) {
             log.error("Failed to search similar docs", e);
@@ -108,38 +117,38 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeDocMapper, Knowle
     }
     
     private String generateEmbedding(String text) throws Exception {
+        String url = getEmbeddingUrl();
+        String apiKey = getEmbeddingApiKey();
+        String model = getEmbeddingModel();
+        
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(embeddingApiKey);
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
         
         java.util.Map<String, Object> requestBody = new java.util.HashMap<>();
-        requestBody.put("model", embeddingModel);
+        requestBody.put("model", model);
         requestBody.put("input", text);
         
-        HttpEntity<java.util.Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+        HttpEntity<java.util.Map<String, Object>> request = 
+            new HttpEntity<>(requestBody, headers);
         
-        ResponseEntity<String> response = restTemplate.postForEntity(embeddingUrl, request, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
         
-        if (response.getStatusCode() != HttpStatus.OK) {
+        if (response.getStatusCode() != org.springframework.http.HttpStatus.OK) {
             throw new RuntimeException("Failed to generate embedding: " + response.getBody());
         }
         
         JsonNode root = objectMapper.readTree(response.getBody());
         JsonNode embeddingNode = root.path("data").get(0).path("embedding");
         
-        // Convert to pgvector format: [v1,v2,v3,...]
-        String embeddingStr = "[" + embeddingNode.iterator().next().asText();
-        // Actually, let me properly iterate
         StringBuilder sb = new StringBuilder("[");
         for (JsonNode node : embeddingNode) {
-            if (sb.length() > 1) {
-                sb.append(",");
-            }
+            if (sb.length() > 1) sb.append(",");
             sb.append(node.asDouble());
         }
         sb.append("]");
         
-        log.info("Generated embedding with {} dimensions", embeddingNode.size());
+        log.info("Generated embedding with {} dimensions using model {}", embeddingNode.size(), model);
         return sb.toString();
     }
 }

@@ -61,5 +61,23 @@ public class DatabaseSchemaFix implements ApplicationRunner {
         // deals 表补充字段
         try { jdbcTemplate.execute("ALTER TABLE deals ADD COLUMN IF NOT EXISTS title VARCHAR(255)"); log.info("✅ deals.title added"); }
         catch (Exception e) { log.warn("deals.title: {}", e.getMessage()); }
+        
+        // 系统配置表（AI 模型参数配置）
+        try {
+            jdbcTemplate.execute("""
+                CREATE TABLE IF NOT EXISTS system_config (
+                    id BIGSERIAL PRIMARY KEY,
+                    config_key VARCHAR(100) UNIQUE NOT NULL,
+                    config_value TEXT,
+                    description VARCHAR(255),
+                    category VARCHAR(50),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """);
+            log.info("✅ system_config table created");
+        } catch (Exception e) {
+            log.warn("system_config table: {}", e.getMessage());
+        }
     }
 }

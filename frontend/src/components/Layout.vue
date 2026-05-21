@@ -51,6 +51,11 @@
           <el-icon><MapLocation /></el-icon>
           <template #title>客户地图</template>
         </el-menu-item>
+
+        <el-menu-item index="/settings">
+          <el-icon><Setting /></el-icon>
+          <template #title>系统设置</template>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
